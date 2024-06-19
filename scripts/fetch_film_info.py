@@ -22,7 +22,20 @@ def parse_date(date_str):
         return None
 
 
-for i in range(1, 100):
+def get_latest_index():
+    with open('i.txt', 'r', encoding='utf-8') as file:
+        index = file.read()
+    return index
+
+
+def save_latest_index(i):
+    with open('i.txt', 'w', encoding='utf-8') as file:
+        file.write(i)
+
+
+i = int(get_latest_index())
+print("i = ",i)
+while True:
     try:
         movie = tmdb.Movies(i)
         response = movie.info()
@@ -85,5 +98,11 @@ for i in range(1, 100):
 
         print(
             f"ID: {i}   Movie '{title}' added  Genres: {', '.join(genres)},  Collection: {collection_obj}, and poster URL: {poster_url}")
+
+        i += 1
     except requests.exceptions.HTTPError:
         pass
+    except KeyboardInterrupt:
+        print("Saved at i = ",i)
+        save_latest_index(str(i))
+        break
