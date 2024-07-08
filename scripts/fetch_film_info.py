@@ -34,7 +34,7 @@ def save_latest_index(i):
 
 
 i = int(get_latest_index())
-print("i = ",i)
+print("i = ", i)
 while True:
     try:
         movie = tmdb.Movies(i)
@@ -48,7 +48,15 @@ while True:
         revenue = movie.revenue
         poster_path = movie.poster_path
         poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else ''
+        backdrop_path = movie.backdrop_path
+        backdrop_url = f"https://image.tmdb.org/t/p/w500{backdrop_path}" if backdrop_path else ''
         tagline = movie.tagline
+        is_adult = movie.adult
+        imdb_id = movie.imdb_id
+        original_title = movie.original_title
+        tmdb_popularity = movie.popularity
+        tmdb_vote_average = movie.vote_average
+        tmdb_vote_count = movie.vote_count
 
         belongs_to_collection = movie.belongs_to_collection
         collection_obj = None
@@ -71,7 +79,14 @@ while True:
                 'revenue': revenue,
                 'budget': budget,
                 'poster_url': poster_url,
+                'backdrop_url': backdrop_url,
                 'tagline': tagline,
+                'is_adult': is_adult,
+                'imdb_id': imdb_id,
+                'original_title': original_title,
+                'tmdb_popularity': tmdb_popularity,
+                'tmdb_vote_average': tmdb_vote_average,
+                'tmdb_vote_count': tmdb_vote_count,
                 'belongs_to_collection': collection_obj,
             }
         )
@@ -83,7 +98,14 @@ while True:
             movie_obj.revenue = revenue
             movie_obj.budget = budget
             movie_obj.poster_url = poster_url
+            movie_obj.backdrop_url = backdrop_url
             movie_obj.tagline = tagline
+            movie_obj.is_adult = is_adult
+            movie_obj.imdb_id = imdb_id
+            movie_obj.original_title = original_title
+            movie_obj.tmdb_popularity = tmdb_popularity
+            movie_obj.tmdb_vote_average = tmdb_vote_average
+            movie_obj.tmdb_vote_count = tmdb_vote_count
             movie_obj.belongs_to_collection = collection_obj
             movie_obj.save()
 
@@ -103,6 +125,6 @@ while True:
     except requests.exceptions.HTTPError:
         pass
     except KeyboardInterrupt:
-        print("Saved at i = ",i)
+        print("Saved at i = ", i)
         save_latest_index(str(i))
         break
