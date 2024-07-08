@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const moviesSection = document.querySelector('.movies');
-    moviesSection.textContent += "Test"
+    moviesSection.textContent += "Test";
     fetch('/api/movies/')
         .then(response => {
             if (!response.ok) {
