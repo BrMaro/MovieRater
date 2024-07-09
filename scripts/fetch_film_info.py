@@ -3,16 +3,24 @@ import requests.exceptions
 from dotenv import load_dotenv
 import tmdbsimple as tmdb
 from datetime import datetime
+from imdb import Cinemagoer
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MovieRater.settings')
 import django
 
 django.setup()
-from main.models import Genre, Movie, Collection
+from main.models import Genre, Movie, Collection, Ratings
 
 load_dotenv()
-
 tmdb.API_KEY = os.getenv('TMDB_API_KEY')
+
+
+def get_imdb_rating(imdb_id):
+    ia = Cinemagoer()
+    imdb_movie = ia.get_movie(imdb_id.replace('tt', ''))
+    rating = imdb_movie.get('rating')
+    votes = imdb_movie.get('votes')
+    return rating, votes
 
 
 def parse_date(date_str):
@@ -34,7 +42,7 @@ def save_latest_index(i):
 
 
 i = int(get_latest_index())
-print("i = ", i)
+print("starting_id: ", i)
 while True:
     try:
         movie = tmdb.Movies(i)
@@ -51,12 +59,14 @@ while True:
         backdrop_path = movie.backdrop_path
         backdrop_url = f"https://image.tmdb.org/t/p/w500{backdrop_path}" if backdrop_path else ''
         tagline = movie.tagline
-        is_adult = movie.adult
+        adult = movie.adult
         imdb_id = movie.imdb_id
         original_title = movie.original_title
-        tmdb_popularity = movie.popularity
-        tmdb_vote_average = movie.vote_average
-        tmdb_vote_count = movie.vote_count
+
+        if imdb_id:
+            imdb_rating, imdb_vote_count = get_imdb_rating(imdb_id)
+        else:
+            imdb_rating, imdb_vote_count = None, None
 
         belongs_to_collection = movie.belongs_to_collection
         collection_obj = None
@@ -81,12 +91,9 @@ while True:
                 'poster_url': poster_url,
                 'backdrop_url': backdrop_url,
                 'tagline': tagline,
-                'is_adult': is_adult,
+                'adult': adult,
                 'imdb_id': imdb_id,
                 'original_title': original_title,
-                'tmdb_popularity': tmdb_popularity,
-                'tmdb_vote_average': tmdb_vote_average,
-                'tmdb_vote_count': tmdb_vote_count,
                 'belongs_to_collection': collection_obj,
             }
         )
@@ -100,14 +107,22 @@ while True:
             movie_obj.poster_url = poster_url
             movie_obj.backdrop_url = backdrop_url
             movie_obj.tagline = tagline
-            movie_obj.is_adult = is_adult
+            movie_obj.adult = adult
             movie_obj.imdb_id = imdb_id
             movie_obj.original_title = original_title
-            movie_obj.tmdb_popularity = tmdb_popularity
-            movie_obj.tmdb_vote_average = tmdb_vote_average
-            movie_obj.tmdb_vote_count = tmdb_vote_count
             movie_obj.belongs_to_collection = collection_obj
             movie_obj.save()
+
+        Ratings.objects.update_or_create(
+            movie=movie_obj,
+            defaults={
+                'tmdb_popularity': movie.popularity,
+                'tmdb_vote_average': movie.vote_average,
+                'tmdb_vote_count': movie.vote_count,
+                'imdb_rating': imdb_rating,
+                'imdb_vote_count': imdb_vote_count,
+            }
+        )
 
         genres_array = movie.genres
         genres = []
@@ -119,12 +134,16 @@ while True:
                 movie_obj.genres.add(genre_obj)
 
         print(
-            f"ID: {i}   Movie '{title}' added  Genres: {', '.join(genres)},  Collection: {collection_obj}, and poster URL: {poster_url}")
-
+            f"ID: {i}   Movie '{title}' ")
         i += 1
     except requests.exceptions.HTTPError:
+        i += 1
         pass
     except KeyboardInterrupt:
-        print("Saved at i = ", i)
+        print("Terminated at id: ", i)
+        save_latest_index(str(i))
+        break
+    except:
+        print("Terminated at id: ", i)
         save_latest_index(str(i))
         break
