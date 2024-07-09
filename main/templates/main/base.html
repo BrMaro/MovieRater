@@ -159,39 +159,41 @@
         <p>&copy; 2024 MovieR8.com by BrMaro. All rights reserved.</p>
     </footer>
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const moviesSection = document.querySelector('.movies');
-        fetch('/api/movies/')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(movies_list => {
-                movies_list.forEach(movie => {
-                if (movie.poster_url){
-                    const movieCard = document.createElement('div');
-                    movieCard.classList.add('movie-card');
+        document.addEventListener('DOMContentLoaded', () => {
+            const moviesSection = document.querySelector('.movies');
+            fetch('/api/movies/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(movies_list => {
+                    movies_list.sort((a, b) => b.tmdb_popularity - a.tmdb_popularity);
+                    console.log(movies_list)
 
-                    movieCard.innerHTML = `
-                        <img src="${movie.poster_url}" alt="${movie.title} Poster">
-                        <div class="overlay">
-                            <h3>${movie.title}</h3>
-                            <p>${movie.overview.substring(0, 100)}...</p>
-                        </div>
-                    `;
+                    movies_list.forEach(movie => {
+                    if (movie.poster_url){
+                        const movieCard = document.createElement('div');
+                        movieCard.classList.add('movie-card');
 
-                    moviesSection.appendChild(movieCard); 
-                }
-                  
+                            movieCard.innerHTML = `
+                                <img src="${movie.poster_url}" alt="${movie.title} Poster">
+                                <div class="overlay">
+                                    <h3>${movie.title}</h3>
+                                    <p>${movie.overview.substring(0, 100)}...</p>
+                                </div>
+                            `;
+
+                            moviesSection.appendChild(movieCard);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching movies:", error);
+                    moviesSection.innerHTML = `<p>Error fetching movies: ${error.message}</p>`;
                 });
-            })
-            .catch(error => {
-                console.error("Error fetching movies:", error);
-                moviesSection.innerHTML = `<p>Error fetching movies: ${error.message}</p>`;
-            });
-    });
+        });
     </script>
 </body>
 </html>
