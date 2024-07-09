@@ -133,8 +133,7 @@ while True:
                 genre_obj, _ = Genre.objects.get_or_create(name=genre_name)
                 movie_obj.genres.add(genre_obj)
 
-        print(
-            f"ID: {i}   Movie '{title}' ")
+        print(f"ID: {i}   Movie '{title}' ")
         i += 1
     except requests.exceptions.HTTPError:
         i += 1
@@ -143,7 +142,7 @@ while True:
         print("Terminated at id: ", i)
         save_latest_index(str(i))
         break
-    except:
-        print("Terminated at id: ", i)
+    except Exception as e:
+        print(f"Terminated at id: {i} due to error: {e}")
         save_latest_index(str(i))
         break
