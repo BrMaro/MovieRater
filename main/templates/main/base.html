@@ -11,78 +11,83 @@
             background-color: #000000;
             color: #E5E5E5;
         }
-    
+
         header {
-            background-color: #14213D;
+            background-color: #000000;
             color: #FCA311;
-            text-align: center;
-            padding: 1em 0;
+            text-align: left;
+            padding: 1em 2em;
         }
-    
+
         header h1 {
             margin: 0;
-            font-size: 2.5em;
+            font-size: 1.5em;
         }
-    
-        header p {
-            margin: 0.5em 0 0;
-            font-size: 1.2em;
-        }
-    
-        .hero {
-            background-color: #FCA311;
-            padding: 2em 0;
-            text-align: center;
-            color: #14213D;
-        }
-    
-        .hero h2 {
-            margin: 0;
-            font-size: 2em;
-        }
-    
-        .hero p {
-            font-size: 1.2em;
-        }
-    
-        .btn {
-            background-color: #14213D;
-            color: #FCA311;
-            padding: 0.5em 1em;
-            text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
-            margin-top: 1em;
-        }
-    
+
+          .hero {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        overflow: hidden;
+        border-radius: 15px;
+    }
+
+    .hero .slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        transition: opacity 1s ease-in-out;
+        opacity: 0;
+        border-radius: 15px;
+    }
+
+    .hero .slide.active {
+        opacity: 1;
+    }
+
+    .hero .overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+        border-radius: 15px;
+    }
         .movies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
             padding: 2em;
+            justify-content: center;
         }
-    
+
         .movies h2 {
             text-align: center;
             margin-bottom: 1em;
             font-size: 2em;
             color: #FCA311;
+            width: 100%;
         }
-    
+
         .movie-card {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             position: relative;
             width: 200px;
             margin: 1em;
             overflow: hidden;
-            display: inline-block;
             border-radius: 15px;
             transition: transform 0.3s ease;
         }
-    
+
         .movie-card img {
             width: 100%;
             display: block;
             border-radius: 15px;
         }
-    
+
         .movie-card .overlay {
             position: absolute;
             top: 0;
@@ -101,35 +106,34 @@
             text-align: center;
             border-radius: 15px;
         }
-    
+
         .movie-card:hover .overlay {
             opacity: 1;
         }
-    
+
         .movie-card:hover {
             transform: scale(1.05);
         }
-    
+
         .movie-card .overlay h3 {
             margin: 0;
             text-align: center;
             font-size: 1.2em;
             color: white;
             font-weight: bold;
-            padding-left: 12%; 
-            padding-right: 24%; 
+            padding-left: 12%;
+            padding-right: 24%;
         }
-    
+
         .movie-card .overlay p {
             text-align: center;
             font-size: 0.8em;
             font-weight: bold;
-
             margin: 0.5em 0 0;
-            padding-left: 12%; 
-            padding-right: 24%; 
+            padding-left: 12%;
+            padding-right: 24%;
         }
-    
+
         footer {
             text-align: center;
             padding: 1em 0;
@@ -137,19 +141,17 @@
             color: #FCA311;
         }
     </style>
-    
 </head>
 <body>
     <header>
         <h1>MovieR8</h1>
-        <p>Your ultimate destination for honest accurate movie ratings!</p>
     </header>
     <main id="main">
         <section class="hero">
             <div class="hero-content">
-                <h2>Discover the Highest Rated Movies</h2>
-                <p>Explore our curated collection of movies rated by users over a select number of websites.</p>
+                <!-- Hero images will be dynamically generated here -->
             </div>
+            <div class="overlay"></div>
         </section>
         <section id="movies" class="movies">
             <!-- Movie cards will be dynamically generated here -->
@@ -161,6 +163,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const moviesSection = document.querySelector('.movies');
+            const heroSection = document.querySelector('.hero-content');
+            let heroIndex = 0;
+            let top10Movies = [];
+
             fetch('/api/movies/')
                 .then(response => {
                     if (!response.ok) {
@@ -170,12 +176,20 @@
                 })
                 .then(movies_list => {
                     movies_list.sort((a, b) => b.tmdb_popularity - a.tmdb_popularity);
-                    console.log(movies_list)
+                    top10Movies = movies_list.slice(0, 10);
+
+                    top10Movies.forEach((movie, index) => {
+                        const slide = document.createElement('div');
+                        slide.classList.add('slide');
+                        if (index === 0) slide.classList.add('active');
+                        slide.style.backgroundImage = `url(${movie.poster_url})`;
+                        heroSection.appendChild(slide);
+                    });
 
                     movies_list.forEach(movie => {
-                    if (movie.poster_url){
-                        const movieCard = document.createElement('div');
-                        movieCard.classList.add('movie-card');
+                        if (movie.poster_url){
+                            const movieCard = document.createElement('div');
+                            movieCard.classList.add('movie-card');
 
                             movieCard.innerHTML = `
                                 <img src="${movie.poster_url}" alt="${movie.title} Poster">
@@ -188,6 +202,13 @@
                             moviesSection.appendChild(movieCard);
                         }
                     });
+
+                    setInterval(() => {
+                        const slides = document.querySelectorAll('.hero-content .slide');
+                        slides[heroIndex].classList.remove('active');
+                        heroIndex = (heroIndex + 1) % slides.length;
+                        slides[heroIndex].classList.add('active');
+                    }, 5000);
                 })
                 .catch(error => {
                     console.error("Error fetching movies:", error);
