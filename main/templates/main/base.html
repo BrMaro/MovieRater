@@ -21,9 +21,24 @@
             padding: 1em 2em;
         }
 
+        header a {
+            text-decoration: none;
+            color: inherit;
+        }
+
         header h1 {
             margin: 0;
             font-size: 1.5em;
+            display: flex;
+            align-items: center;
+        }
+
+        header h1 span {
+            margin-left: 0.3em;
+            padding: 0.2em 0.4em;
+            background-color: #FCA311;
+            color: #000000;
+            border-radius: 10px;
         }
 
         .rank-button {
@@ -38,8 +53,8 @@
         }
 
         .rank-button:hover {
-            background-color:#FCA311;
-            color:#000000;
+            background-color: #FCA311;
+            color: #000000;
         }
     </style>
     {% block head %}
@@ -47,7 +62,9 @@
 </head>
 <body>
     <header>
-        <h1>MovieR8</h1>
+        <a href="/">
+            <h1>Movie<span>R8</span></h1>
+        </a>
         <a href="/"><button class="rank-button">Rank</button></a>
     </header>
     {% block content %}
