@@ -28,7 +28,8 @@
             left: 0;
             width: 100%;
             padding: 2em;
-            background: rgba(0, 0, 0, 0.5);
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+            max-width: fit-content;
             color: #FFFFFF;
             border-bottom-left-radius: 15px;
             border-bottom-right-radius: 15px;
@@ -83,7 +84,7 @@
         }
 
         .ratings-table {
-            font-size: 0.7em;
+            font-size: 0.8em;
             border-spacing: 0;
             margin-top: 1em;
         }
@@ -133,7 +134,7 @@
         </div>
         {% if movie_collection %}
             <div class="collection">
-                <h2>Part of the {{ collection_name }} Collection</h2>
+                <h2>{{ collection_name }} </h2>
                 {% if collection_poster_path %}
                     <img src="{{ collection_poster_path }}" alt="{{ collection_name }} Poster">
                 {% endif %}
