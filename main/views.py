@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from main.models import Movie, Ratings, Genre, Collection
-import pprint
 
 
 # Create your views here.
@@ -27,7 +26,7 @@ def movie_page(response, movie_id):
             'overview': movie.overview,
             'release_date': movie.release_date,
             'runtime': movie.runtime,
-            'adult':movie.adult,
+            'adult': movie.adult,
             'poster_url': movie.poster_url,
             'backdrop_url': movie.backdrop_url,
             'tagline': movie.tagline,
@@ -39,11 +38,11 @@ def movie_page(response, movie_id):
             'genres': movie_genres
         }
         if movie_collection:
-            movie_data['collection_name'] = movie_collection.name,
-            movie_data['collection_poster_path'] = movie_collection.poster_path,
+            movie_data['collection_name'] = str(movie_collection.name).replace("('", '').replace("',)", "")
+            movie_data['collection_poster_path'] = movie_collection.poster_path
             movie_data['collection_backdrop_path'] = movie_collection.backdrop_path
+            movie_data['other_movies_in_collection'] = Movie.objects.filter(belongs_to_collection=movie_collection).exclude(movie_id=movie_id)
 
-        pprint.pprint(movie_data)
         return render(response, 'main/movie_page.html', movie_data)
 
 
@@ -54,7 +53,7 @@ def movies_json(request):
         movie_id = movie['movie_id']
         movie_ratings = get_object_or_404(Ratings, movie_id=movie_id)
         movie_data = {
-            'movie_id':movie['movie_id'],
+            'movie_id': movie['movie_id'],
             'title': movie['title'],
             'overview': movie['overview'],
             'poster_url': movie['poster_url'],
