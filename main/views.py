@@ -39,9 +39,9 @@ def movie_page(response, movie_id):
             'genres': movie_genres
         }
         if movie_collection:
-            movie_data['collection_name'] = movie_collection['name'],
-            movie_data['collection_poster_path'] = movie_collection['poster_path'],
-            movie_data['collection_backdrop_path'] = movie_collection['backdrop_path']
+            movie_data['collection_name'] = movie_collection.name,
+            movie_data['collection_poster_path'] = movie_collection.poster_path,
+            movie_data['collection_backdrop_path'] = movie_collection.backdrop_path
 
         pprint.pprint(movie_data)
         return render(response, 'main/movie_page.html', movie_data)
@@ -54,6 +54,7 @@ def movies_json(request):
         movie_id = movie['movie_id']
         movie_ratings = get_object_or_404(Ratings, movie_id=movie_id)
         movie_data = {
+            'movie_id':movie['movie_id'],
             'title': movie['title'],
             'overview': movie['overview'],
             'poster_url': movie['poster_url'],
