@@ -13,15 +13,33 @@
         }
 
         header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             background-color: #000000;
             color: #FCA311;
-            text-align: left;
             padding: 1em 2em;
         }
 
         header h1 {
             margin: 0;
             font-size: 1.5em;
+        }
+
+        .rank-button {
+            border: 2px solid #FCA311;
+            color: #FCA311;
+            border-radius: 10px;
+            background-color: transparent;
+            padding: 0.5em 1em;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .rank-button:hover {
+            background-color:#FCA311;
+            color:#000000;
         }
     </style>
     {% block head %}
@@ -30,6 +48,7 @@
 <body>
     <header>
         <h1>MovieR8</h1>
+        <a href="/"><button class="rank-button">Rank</button></a>
     </header>
     {% block content %}
     {% endblock %}

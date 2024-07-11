@@ -204,10 +204,12 @@
 
                         movieCard.innerHTML = `
                             <img src="${movie.poster_url}" alt="${movie.title} Poster">
-                            <div class="overlay">
-                                <h3>${movie.title}</h3>
-                                <p>${movie.overview.substring(0, 100)}...</p>
-                            </div>
+                            <a href='/'>
+                                <div class="overlay">
+                                    <h3>${movie.title}</h3>
+                                    <p>${movie.overview.substring(0, 100)}...</p>
+                                </div>
+                            </a>
                         `;
 
                         moviesSection.appendChild(movieCard);
