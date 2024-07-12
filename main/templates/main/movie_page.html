@@ -14,12 +14,14 @@
 
         .movie-detail .backdrop {
             width: 100%;
-            height: 400px;
-            background-size: contain;
+            max-width: 1000px;
+            max-height: 400px;
+            background-size: cover;
             background-position: center;
             border-radius: 15px;
             position: relative;
             margin-bottom: 2em;
+            aspect-ratio: 2.5/1;
         }
 
         .movie-detail .overlay {
@@ -84,13 +86,27 @@
         }
 
         .ratings-table {
+            width: 50%;
             font-size: 0.8em;
             border-spacing: 0;
             margin-top: 1em;
         }
 
+        .info p strong {
+            color: #FCA311;
+        }
+
         .ratings-table td {
             padding: 0.3em 1em;
+        }
+
+        .ratings-table td span {
+            background-color: #FCA311;
+            color: #000000;
+            font-weight: 600;
+            font-size: 1.2em;
+            padding: 0 5px;
+            border-radius: 3px;
         }
 
         .more-like-this {
@@ -143,15 +159,10 @@
             margin: 0;
         }
 
-        /* .more-like-this .collection-movies .movie-card .info-overlay .imdb-rating {
-            color: #FCA311;
-            font-size: 0.8em;
-            font-weight:900;
-        } */
         .more-like-this .collection-movies .movie-card .info-overlay .imdb-rating {
             background-color: #FCA311;
             color: #000000;
-            font-weight:900;
+            font-weight: 800;
             font-size: 0.8em;
             padding: 0 5px;
             border-radius: 3px;
@@ -191,12 +202,12 @@
                 <p><strong>Adult:</strong> {{ adult|yesno:"Yes,No" }}</p>
                 <table class="ratings-table">
                     <tr>
-                        <td><strong>TMDb Popularity:</strong> {{ tmdb_popularity }}</td>
-                        <td><strong>TMDb Vote Average:</strong> {{ tmdb_vote_average }}</td>
+                        <td><strong>TMDb Popularity:</strong> <span>{{ tmdb_popularity }}</span></td>
+                        <td><strong>IMDb Rating:</strong> <span>{{ imdb_rating }}</span></td>
                     </tr>
                     <tr>
-                        <td><strong>IMDb Rating:</strong> {{ imdb_rating }}</td>
-                        <td><strong>IMDb Vote Count:</strong> {{ imdb_vote_count }}</td>
+                        <td><strong>TMDb Rating:</strong> <span>{{ tmdb_vote_average }}</span></td>
+                        <td><strong>IMDb Vote Count:</strong> <span>{{ imdb_vote_count }}</span> </td>
                     </tr>
                 </table>
             </div>

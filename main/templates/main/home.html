@@ -15,14 +15,16 @@
         }
 
         .hero .slide {
-            position: absolute;
+            position: relative;
             width: 100%;
             height: 100%;
             background-size: contain;
-            /* background-position: center; */
+            background-position: center;
             transition: opacity 1s ease-in-out;
             opacity: 0;
             border-radius: 15px;
+            margin-bottom: 2em;
+
         }
 
         .hero .slide.active {
@@ -223,11 +225,12 @@
                                     </div>
                                 </a>
                             `;
-
                             moviesSection.appendChild(movieCard);
                         }
                     });
 
+
+                    // Slide interval
                     setInterval(() => {
                         const slides = document.querySelectorAll('.hero-content .slide');
                         slides[heroIndex].classList.remove('active');
@@ -237,13 +240,14 @@
                         heroOverview.textContent = top10Movies[heroIndex].overview.substring(0,100)+'...';
                     }, 5000);
 
-                    // Add scroll animation for movie cards
+
+                    // Scroll animation for movie cards
                     const movieCards = document.querySelectorAll('.movie-card');
                     window.addEventListener('scroll', checkBoxes);
                     checkBoxes();
 
                     function checkBoxes() {
-                        const triggerBottom = window.innerHeight / 5 * 4;
+                        const triggerBottom = window.innerHeight / 20 * 19;
                         movieCards.forEach(card => {
                             const cardTop = card.getBoundingClientRect().top;
                             if (cardTop < triggerBottom) {
