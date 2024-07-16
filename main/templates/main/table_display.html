@@ -1,0 +1,153 @@
+{% extends "main/base.html" %}
+
+{% block title %}Rankings - MovieR8{% endblock %}
+
+{% block head %}
+    <style>
+        .ranking-container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 2em 0;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2em 0;
+        }
+
+        .ranking-table th, .ranking-table td {
+            border: 1px solid var(--text-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .ranking-table th {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .ranking-table tr:nth-child(even) {
+            background-color: #f2f2f221;
+        }
+
+
+        .ranking-table img {
+            width: 75px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .ranking-title {
+            color: var(--secondary-color);
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 1em;
+        }
+
+   
+        .genres span {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 0.5em 1em;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+
+        .title-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+
+        .title-poster-container {
+            flex: 0 0 auto;
+        }
+
+        .title-poster-container img {
+            height: 100%;
+            max-height: 200px; /* Optional: set a max-height if needed */
+        }
+
+        .title-text-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            line-height: 8px;
+            flex-grow: 1;
+            font-weight: 600;
+            font-size: 16px;
+            color:var(--greyed-text-color);
+        }
+
+        .title-text-container a {
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--secondary-color);
+        }
+        
+        table .rank-number {
+            font: 'Tahoma Bold';
+            font-size: 36px;
+            text-align: center; 
+            vertical-align: middle;        
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="ranking-container">
+        <h2 class="ranking-title">Top Movies by Popularity</h2>
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Title</th>
+                    <th>Genres</th>
+                    <th>Popularity</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for movie in movies %}
+                <tr>
+                    <td class="rank-number">{{ forloop.counter }}</td>
+                    <td>
+                        <div class="title-container">
+                            <div class="title-poster-container"> 
+                                <a href="{{ movie.movie_id }}">
+                                    <img src="{{ movie.poster_url }}" alt="{{ movie.title }} Poster">
+                                </a>
+                            </div>
+                            <div class="title-text-container">
+                                <a href="{{ movie.movie_id }}">{{ movie.title }}</a>
+                                <p>{{ movie.runtime }}</p>
+                             
+                                <p>Votes: {{ movie.imdb_vote_count }}</p>
+                                {% if movie.collection_name %}
+                                    <p>{{ movie.collection_name }} : {{ movie.num_of_movies_in_collection}} </p>
+                                {% endif %}
+                                </div>
+                        </div>
+                    </td>
+                    <td>   
+                        <div class="genres">
+                            {% for genre in movie.genres %}
+                                <span>{{ genre.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td>{{ movie.tmdb_popularity }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
