@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from main.models import Movie, Ratings, Genre, Collection
+import pprint
+
+tmdb_image_link = 'https://image.tmdb.org/t/p/w500'
 
 
 # Create your views here.
@@ -41,7 +44,8 @@ def movie_page(response, movie_id):
             movie_data['collection_name'] = str(movie_collection.name).replace("('", '').replace("',)", "")
             movie_data['collection_poster_path'] = movie_collection.poster_path
             movie_data['collection_backdrop_path'] = movie_collection.backdrop_path
-            movie_data['other_movies_in_collection'] = Movie.objects.filter(belongs_to_collection=movie_collection).exclude(movie_id=movie_id)
+            movie_data['other_movies_in_collection'] = Movie.objects.filter(
+                belongs_to_collection=movie_collection).exclude(movie_id=movie_id)
 
         return render(response, 'main/movie_page.html', movie_data)
 
@@ -63,3 +67,36 @@ def movies_json(request):
         }
         movies_list.append(movie_data)
     return JsonResponse(movies_list, safe=False)
+
+
+def collections(response):
+    collections_list = Collection.objects.all().values('collection_id', 'name', 'poster_path', 'backdrop_path')
+
+    collections_data = []
+    for collection in collections_list:
+        collection_id = collection['collection_id']
+        movies_in_collection = Movie.objects.filter(belongs_to_collection=collection_id)
+        collection_data = {
+            'collection_id': collection_id,
+            'name': collection['name'],
+            'poster_path': tmdb_image_link + str(collection['poster_path']),
+            'movies_in_collection': movies_in_collection,
+        }
+        collections_data.append(collection_data)
+    pprint.pprint(collections_data[0])
+    return render(response, 'main/collections.html', {'collections': collections_data})
+
+
+def collection_page(response, collection_id):
+    collection = get_object_or_404(Collection, collection_id=collection_id)
+
+    movies_in_collection = Movie.objects.filter(belongs_to_collection=collection_id)
+    collection_data = {
+        'collection_id': collection_id,
+        'collection_name': collection.name,
+        'collection_poster_path': tmdb_image_link + str(collection.poster_path),
+        'collection_backdrop_path': tmdb_image_link + str(collection.backdrop_path),
+        'movies_in_collection': movies_in_collection,
+    }
+
+    return render(response, 'main/collection_page.html',collection_data)
