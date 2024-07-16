@@ -7,6 +7,14 @@ import pprint
 tmdb_image_link = 'https://image.tmdb.org/t/p/w500'
 
 
+def format_runtime(minutes):
+    hours, minutes = divmod(minutes, 60)
+    if hours > 0:
+        return f"{hours}h {minutes} min"
+    else:
+        return f"{minutes} min"
+
+
 # Create your views here.
 
 def index(request):
@@ -99,4 +107,40 @@ def collection_page(response, collection_id):
         'movies_in_collection': movies_in_collection,
     }
 
-    return render(response, 'main/collection_page.html',collection_data)
+    return render(response, 'main/collection_page.html', collection_data)
+
+
+def table_display(response):
+    movies = Movie.objects.all()
+    movielist_data = []
+    for movie in movies:
+        movie_ratings = get_object_or_404(Ratings, movie=movie)
+        movie_genres = movie.genres.all()
+        movie_collection = movie.belongs_to_collection
+
+        movie_data = {
+            'title': movie.title,
+            'overview': movie.overview,
+            'release_date': movie.release_date,
+            'runtime': format_runtime(movie.runtime),
+            'adult': movie.adult,
+            'poster_url': movie.poster_url,
+            'backdrop_url': movie.backdrop_url,
+            'tagline': movie.tagline,
+            'original_title': movie.original_title,
+            'tmdb_popularity': movie_ratings.tmdb_popularity,
+            'tmdb_vote_average': movie_ratings.tmdb_vote_average,
+            'imdb_rating': movie_ratings.imdb_rating,
+            'imdb_vote_count': movie_ratings.imdb_vote_count,
+            'genres': movie_genres
+        }
+        if movie_collection:
+            movie_data['collection_name'] = str(movie_collection.name).replace("('", '').replace("',)", "")
+            movie_data['collection_poster_path'] = movie_collection.poster_path
+            movie_data['collection_backdrop_path'] = movie_collection.backdrop_path
+            movie_data['num_of_movies_in_collection'] = len(Movie.objects.filter(belongs_to_collection=movie_collection))
+        movielist_data.append(movie_data)
+
+        sorted_movielist_data = sorted(movielist_data, key=lambda x: x['tmdb_popularity'], reverse=True)
+
+    return render(response, 'main/table_display.html', {'movies': movielist_data})
