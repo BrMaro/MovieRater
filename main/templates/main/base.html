@@ -5,10 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}MovieR8{% endblock %}</title>
     <style>
+        :root {
+            --primary-color:#000000;
+            --secondary-color:#FCA311;
+            /* --secondary-color:#b40000; */
+            --text-color: #E5E5E5;
+            --greyed-text-color: #e5e5e594;
+            --table-border-color: #E5E5E5;
+        }
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color:#001d3d;
+            background-color:var(--primary-color);
             color: #E5E5E5;
         }
 
@@ -16,8 +25,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #000000;
-            color: #FCA311;
+            background-color: var(--header-background-color);
+            color: var(--secondary-color);
             padding: 1em 2em;
         }
 
@@ -36,25 +45,26 @@
         header h1 span {
             margin-left: 0.3em;
             padding: 0.2em 0.4em;
-            background-color: #FCA311;
-            color: #000000;
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
             border-radius: 10px;
         }
 
-        .rank-button {
-            border: 2px solid #FCA311;
-            color: #FCA311;
-            border-radius: 10px;
-            background-color: transparent;
+        .login-button {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
             padding: 0.5em 1em;
             font-size: 1em;
             cursor: pointer;
+            border-radius: 10px;
             transition: background-color 0.3s ease;
         }
 
-        .rank-button:hover {
-            background-color: #FCA311;
-            color: #000000;
+        .login-button:hover {
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            background-color: transparent;
+      
         }
     </style>
     {% block head %}
@@ -65,7 +75,7 @@
         <a href="/">
             <h1>Movie<span>R8</span></h1>
         </a>
-        <a href="/"><button class="rank-button">Rank</button></a>
+        <a href="/"><button class="login-button">Log In</button></a>
     </header>
     {% block content %}
     {% endblock %}
