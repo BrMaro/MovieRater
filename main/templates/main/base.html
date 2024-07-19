@@ -6,9 +6,8 @@
     <title>{% block title %}MovieR8{% endblock %}</title>
     <style>
         :root {
-            --primary-color:#000000;
-            --secondary-color:#FCA311;
-            /* --secondary-color:#b40000; */
+            --primary-color: #000000;
+            --secondary-color: #FCA311;
             --text-color: #E5E5E5;
             --greyed-text-color: #e5e5e594;
             --table-border-color: #E5E5E5;
@@ -17,17 +16,20 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color:var(--primary-color);
-            color: #E5E5E5;
+            background-color: var(--primary-color);
+            color: var(--text-color);
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: var(--header-background-color);
+            background-color: var(--primary-color);
             color: var(--secondary-color);
             padding: 1em 2em;
+            border-bottom: 5px solid;
+            border-image: linear-gradient(to bottom, var(--primary-color) 80%, var(--secondary-color) 100%);
+            border-image-slice: 1;
         }
 
         header a {
@@ -64,7 +66,28 @@
             border: 2px solid var(--secondary-color);
             color: var(--secondary-color);
             background-color: transparent;
-      
+        }
+
+        .subheader {
+            background-color: var(--primary-color);
+            color: var(--greyed-text-color);
+            padding: 0.5em 2em;
+            display: flex;
+            justify-content: left;
+            border-bottom: 1px solid var(--table-border-color);
+        }
+
+        .subheader a {
+            color: var(--text-color);
+            font-weight: 700;
+            text-decoration: none;
+            margin: 0 1em;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+
+        .subheader a:hover {
+            color: var(--secondary-color);
         }
     </style>
     {% block head %}
@@ -75,8 +98,11 @@
         <a href="/">
             <h1>Movie<span>R8</span></h1>
         </a>
-        <a href="/"><button class="login-button">Log In</button></a>
+        <a href="/login"><button class="login-button">Log In</button></a>
     </header>
+    <div class="subheader">
+        <a href="/collections">Collections</a>
+    </div>
     {% block content %}
     {% endblock %}
 </body>
