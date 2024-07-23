@@ -172,10 +172,10 @@ def home2(request):
             'backdrop_url': movie.backdrop_url,
             'tagline': movie.tagline,
             'original_title': movie.original_title,
-            'tmdb_popularity': movie_ratings.tmdb_popularity if movie_ratings.tmdb_popularity is not None else 0,
+            'tmdb_popularity': movie_ratings.tmdb_popularity if movie_ratings.tmdb_popularity is not None else 0,            'tmdb_vote_count':movie_ratings.tmdb_vote_count if movie_ratings.tmdb_vote_count is not None else 0,
             'tmdb_vote_average': movie_ratings.tmdb_vote_average if movie_ratings.tmdb_vote_average is not None else 0,
             'imdb_rating': movie_ratings.imdb_rating if movie_ratings.imdb_rating is not None else 0,
-            'imdb_vote_count': movie_ratings.imdb_vote_count,
+            'imdb_vote_count': movie_ratings.imdb_vote_count if movie_ratings.imdb_rating is not None else 0,
             'genres': movie_genres
         }
 
@@ -187,6 +187,8 @@ def home2(request):
                 Movie.objects.filter(belongs_to_collection=movie_collection))
 
         movielist_data.append(movie_data)
+
+    movielist_data = [i for i in movielist_data if (i['tmdb_vote_count']+i['imdb_vote_count'])>=10000]
 
     tmdb_top = sorted(movielist_data, key=lambda x: x['tmdb_vote_average'], reverse=True)[:20]
     imdb_top = sorted(movielist_data, key=lambda x: x['imdb_rating'], reverse=True)[:20]
