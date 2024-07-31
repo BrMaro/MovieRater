@@ -1,0 +1,155 @@
+{% extends "main/base.html" %}
+
+{% block title %}Rankings - MovieR8{% endblock %}
+
+{% block head %}
+    <style>
+        body {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .ranking-container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 2em 0;
+            text-align: center;
+        }
+
+        .ranking-title {
+            color: var(--secondary-color);
+            font-size: 3em;
+            margin-bottom: 0.5em;
+        }
+
+        .ranking-subtitle {
+            color: var(--greyed-text-color);
+            font-size: 1.2em;
+            margin-bottom: 2em;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2em 0;
+        }
+
+        .ranking-table th, .ranking-table td {
+            border: 1px solid var(--table-border-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .ranking-table th {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .ranking-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .ranking-table img {
+            width: 75px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-poster-container img {
+            width: 50px;
+            height: 75px;
+            border-radius: 3px;
+        }
+
+        .title-text-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-text-container a {
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.2em;
+            color: var(--secondary-color);
+        }
+
+        .title-text-container p {
+            margin: 0;
+            color: var(--greyed-text-color);
+            font-size: 0.9em;
+        }
+
+        .genres span {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 0.5em 1em;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+
+        table .rank-number {
+            font: 'Tahoma Bold';
+            font-weight:900;
+            font-size: 36px;
+            text-align: center; 
+            vertical-align: middle;        
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="ranking-container">
+        <h2 class="ranking-title">Top Movies by Popularity</h2>
+        <p class="ranking-subtitle">A curated list of the most popular movies based on our weighted score system.</p>
+        <table class="ranking-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Title</th>
+                    <th>Genres</th>
+                    <th>Popularity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movie in movies %}
+                <tr>
+                    <td class="rank-number">{{ forloop.counter }}</td>
+                    <td>
+                        <div class="title-container">
+                            <div class="title-poster-container"> 
+                                <a href="{{ movie.movie_id }}">
+                                    <img src="{{ movie.poster_url }}" alt="{{ movie.title }} Poster">
+                                </a>
+                            </div>
+                            <div class="title-text-container">
+                                <a href="{{ movie.movie_id }}">{{ movie.title }}</a>
+                                <p>Runtime: {{ movie.runtime }} </p>
+                                <p>Votes: {{ movie.imdb_vote_count }}</p>
+                                {% if movie.collection_name %}
+                                    <p>{{ movie.collection_name }} : {{ movie.num_of_movies_in_collection}} films </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="genres">
+                            {% for genre in movie.genres %}
+                                <span>{{ genre.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td>{{ movie.weighted_score }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
