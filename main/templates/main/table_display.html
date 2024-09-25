@@ -76,6 +76,7 @@
         .title-text-container {
             display: flex;
             flex-direction: column;
+            font: Arial;
             justify-content: space-between;
             line-height: 8px;
             flex-grow: 1;
@@ -93,6 +94,7 @@
         
         table .rank-number {
             font: 'Tahoma Bold';
+            font-weight:900;
             font-size: 36px;
             text-align: center; 
             vertical-align: middle;        
@@ -133,7 +135,6 @@
                                 {% if movie.collection_name %}
                                     <p>{{ movie.collection_name }} : {{ movie.num_of_movies_in_collection}} </p>
                                 {% endif %}
-                                </div>
                         </div>
                     </td>
                     <td>   
@@ -143,7 +144,7 @@
                             {% endfor %}
                         </div>
                     </td>
-                    <td>{{ movie.tmdb_popularity }}</td>
+                    <td>{{ movie.weighted_score}}</td>
                 </tr>
                 {% endfor %}
 

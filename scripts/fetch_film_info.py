@@ -55,9 +55,9 @@ while True:
         budget = movie.budget
         revenue = movie.revenue
         poster_path = movie.poster_path
-        poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else ''
+        poster_url = f"https://image.tmdb.org/t/p/original{poster_path}" if poster_path else ''
         backdrop_path = movie.backdrop_path
-        backdrop_url = f"https://image.tmdb.org/t/p/w500{backdrop_path}" if backdrop_path else ''
+        backdrop_url = f"https://image.tmdb.org/t/p/original{backdrop_path}" if backdrop_path else ''
         tagline = movie.tagline
         adult = movie.adult
         imdb_id = movie.imdb_id
@@ -145,4 +145,5 @@ while True:
     except Exception as e:
         print(f"Terminated at id: {i} due to error: {e}")
         save_latest_index(str(i))
-        break
+        i += 1
+        continue

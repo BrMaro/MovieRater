@@ -4,8 +4,9 @@ from django.shortcuts import get_object_or_404
 from main.models import Movie, Ratings, Genre, Collection
 import pprint
 import random
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 
-tmdb_image_link = 'https://image.tmdb.org/t/p/w500'
+tmdb_image_link = 'https://image.tmdb.org/t/p/original'
 
 
 def format_runtime(minutes):
@@ -16,9 +17,14 @@ def format_runtime(minutes):
         return f"{minutes} min"
 
 
-def format_number(number):
-    return "{:,}".format(number)
-
+def format_vote_number(vote_count):
+    if vote_count >= 1_000_000:
+        formatted = f"{vote_count / 1_000_000:.1f}M".rstrip('0').rstrip('.')
+    elif vote_count >= 1_000:
+        formatted = f"{vote_count / 1_000:.1f}K".rstrip('0').rstrip('.')
+    else:
+        formatted = str(vote_count)
+    return formatted
 
 # Create your views here.
 
@@ -41,7 +47,7 @@ def movie_page(response, movie_id):
             'title': movie.title,
             'overview': movie.overview,
             'release_date': movie.release_date,
-            'runtime': movie.runtime,
+            'runtime': format_runtime(movie.runtime),
             'adult': movie.adult,
             'poster_url': movie.poster_url,
             'backdrop_url': movie.backdrop_url,
@@ -118,12 +124,14 @@ def collection_page(response, collection_id):
 def table_display(response):
     movies = Movie.objects.all()
     movielist_data = []
+
     for movie in movies:
         movie_ratings = get_object_or_404(Ratings, movie=movie)
         movie_genres = movie.genres.all()
         movie_collection = movie.belongs_to_collection
 
         movie_data = {
+            'movie_id': movie.movie_id,
             'title': movie.title,
             'overview': movie.overview,
             'release_date': movie.release_date,
@@ -136,9 +144,16 @@ def table_display(response):
             'tmdb_popularity': movie_ratings.tmdb_popularity,
             'tmdb_vote_average': movie_ratings.tmdb_vote_average,
             'imdb_rating': movie_ratings.imdb_rating,
-            'imdb_vote_count': movie_ratings.imdb_vote_count,
+            'imdb_vote_count': format_vote_number(movie_ratings.imdb_vote_count) if movie_ratings.imdb_vote_count is not None else movie_ratings.imdb_vote_count,
             'genres': movie_genres
         }
+
+        # Calculate the weighted score for the movie
+        weighted_score = movie_ratings.calculate_weighted_score()
+
+        # Add the weighted score to the movie data
+        movie_data['weighted_score'] = weighted_score
+
         if movie_collection:
             movie_data['collection_name'] = str(movie_collection.name).replace("('", '').replace("',)", "")
             movie_data['collection_poster_path'] = movie_collection.poster_path
@@ -148,9 +163,19 @@ def table_display(response):
 
         movielist_data.append(movie_data)
 
-    sorted_movielist_data = sorted(movielist_data, key=lambda x: x['tmdb_popularity'], reverse=True)
+    # Sort the movie list data by weighted score in descending order
+    sorted_movielist_data = sorted(movielist_data, key=lambda x: x['weighted_score'], reverse=True)
 
-    return render(response, 'main/table_display.html', {'movies': sorted_movielist_data})
+    p = Paginator(sorted_movielist_data, 50)
+    page_number = response.GET.get('page')
+    try:
+        page_obj = p.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = p.page(1)
+    except EmptyPage:
+        page_obj = p.page(p.num_pages)
+    context = {'page_obj': page_obj}
+    return render(response, 'main/table_display2.html', context)
 
 
 def home2(request):
@@ -172,7 +197,8 @@ def home2(request):
             'backdrop_url': movie.backdrop_url,
             'tagline': movie.tagline,
             'original_title': movie.original_title,
-            'tmdb_popularity': movie_ratings.tmdb_popularity if movie_ratings.tmdb_popularity is not None else 0,            'tmdb_vote_count':movie_ratings.tmdb_vote_count if movie_ratings.tmdb_vote_count is not None else 0,
+            'tmdb_popularity': movie_ratings.tmdb_popularity if movie_ratings.tmdb_popularity is not None else 0,
+            'tmdb_vote_count': movie_ratings.tmdb_vote_count if movie_ratings.tmdb_vote_count is not None else 0,
             'tmdb_vote_average': movie_ratings.tmdb_vote_average if movie_ratings.tmdb_vote_average is not None else 0,
             'imdb_rating': movie_ratings.imdb_rating if movie_ratings.imdb_rating is not None else 0,
             'imdb_vote_count': movie_ratings.imdb_vote_count if movie_ratings.imdb_rating is not None else 0,
@@ -188,13 +214,13 @@ def home2(request):
 
         movielist_data.append(movie_data)
 
-    movielist_data = [i for i in movielist_data if (i['tmdb_vote_count']+i['imdb_vote_count'])>=10000]
+    movielist_data = [i for i in movielist_data if (i['tmdb_vote_count'] + i['imdb_vote_count']) >= 10000]
 
     tmdb_top = sorted(movielist_data, key=lambda x: x['tmdb_vote_average'], reverse=True)[:20]
     imdb_top = sorted(movielist_data, key=lambda x: x['imdb_rating'], reverse=True)[:20]
     tmdb_trending = sorted(movielist_data, key=lambda x: x['tmdb_popularity'], reverse=True)[:20]
     random.shuffle(movielist_data)
-    
+
     context = {
         'tmdb_top': tmdb_top,
         'imdb_top': imdb_top,

@@ -1,6 +1,6 @@
 {% extends "main/base.html" %}
 
-{% block title %}Home - MovieR8{% endblock %}
+{% block title %}MovieR8{% endblock %}
 
 {% block head %}
     <style>
@@ -20,10 +20,8 @@
             gap: 1em;   
         }
         
-
         .movie-card {
             background-color: #1a1a1a;
-            /* border-radius: 10px; */
             overflow: hidden;
             width: 200px;
             transition: transform 0.3s ease;
@@ -87,13 +85,15 @@
         <div class="movie-list">
             {% for movie in imdb_top %}
                 {% if movie.poster_url and not movie.adult %}
-                    <div class="movie-card">
-                        <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
-                        <div class="info">
-                            <h3>{{ movie.title }}</h3>
-                            <p class="rating">Imdb Rating: {{ movie.imdb_rating }}</p>
+                    <a href="{% url 'movie_page' movie.movie_id %}">
+                        <div class="movie-card">
+                            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+                            <div class="info">
+                                <h3>{{ movie.title }}</h3>
+                                <p class="rating">Imdb Rating: {{ movie.imdb_rating }}</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 {% endif %}
             {% endfor %}
         </div>
@@ -103,13 +103,15 @@
         <div class="movie-list">
             {% for movie in tmdb_trending %}
                 {% if movie.poster_url and not movie.adult %}
-                    <div class="movie-card">
-                        <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
-                        <div class="info">
-                            <h3>{{ movie.title }}</h3>
-                            <p class="rating">Popularity: {{ movie.tmdb_popularity }}</p>
+                    <a href="{% url 'movie_page' movie.movie_id %}">
+                        <div class="movie-card">
+                            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+                            <div class="info">
+                                <h3>{{ movie.title }}</h3>
+                                <p class="rating">Popularity: {{ movie.tmdb_popularity }}</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 {% endif %}
             {% endfor %}
         </div>
@@ -119,13 +121,15 @@
         <div class="movie-list">
             {% for movie in random_order %}
                 {% if movie.poster_url and not movie.adult %}
-                    <div class="movie-card">
-                        <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
-                        <div class="info">
-                            <h3>{{ movie.title }}</h3>
-                            <p class="rating">Imdb Rating: {{ movie.imdb_rating }}</p>
+                    <a href="{% url 'movie_page' movie.movie_id %}">
+                        <div class="movie-card">
+                            <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+                            <div class="info">
+                                <h3>{{ movie.title }}</h3>
+                                <p class="rating">Imdb Rating: {{ movie.imdb_rating }}</p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 {% endif %}
             {% endfor %}
         </div>

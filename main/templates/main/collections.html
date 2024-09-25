@@ -4,70 +4,76 @@
 
 {% block head %}
     <style>
-        .collections-page {
+        .section {
             padding: 2em;
-            color: #E5E5E5;
+        }
+
+        .section h2 {
+            border-bottom: 2px solid #FCA311;
+            padding-bottom: 0.5em;
+            margin-bottom: 1em;
         }
 
         .collections-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
+            gap: 1em;
         }
-
+        
         .collection-card {
-            width: 200px;
-            border-radius: 15px;
+            background-color: #1a1a1a;
             overflow: hidden;
+            width: 200px;
             transition: transform 0.3s ease;
-        }
-
-        .collection-card img {
-            width: 100%;
-            border-radius: 15px;
-        }
-
-        .collection-card .info-overlay {
-            gap:20px;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 20%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 10px;
-            box-sizing: border-box;
-        }
-
-        .collection-card .info-overlay h3 {
-            color: #FFFFFF;
-            font-size: 0.8em;
-            margin: 0;
         }
 
         .collection-card:hover {
             transform: scale(1.05);
         }
+
+        .collection-card img {
+            width: 100%;
+        }
+
+        .collections-list a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .collection-card .info {
+            padding: 1em;
+        }
+
+        .collection-card .info h3 {
+            margin: 0;
+            font-size: 0.8em;
+        }
+
+        .collection-card .info p {
+            font-size: 0.6em;
+            text-decoration: none;
+            color: #ccc;
+        }
+
+        .collection-card .info .rating {
+            color: #FCA311;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div class="collections-page">
+    <div class="section">
         <h2>Collections</h2>
         <div class="collections-list">
             {% for collection in collections %}
-                <div class="collection-card">
-                    <a href="{% url 'collection_page' collection.collection_id %}">
+                <a href="{% url 'collection_page' collection.collection_id %}">
+                    <div class="collection-card">
                         <img src="{{ collection.poster_path }}" alt="{{ collection.name }} Poster">
-                        <div class="info-overlay">
+                        <div class="info">
                             <h3>{{ collection.name }}</h3>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
             {% endfor %}
         </div>
     </div>
